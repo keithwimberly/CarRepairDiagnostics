@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <car>
-	<year>2006</year>
-	<make>Ford</make>
-	<model>Explorer</model>
+	<year>2017</year>
+	<make>Lexus</make>
+	<model>EX</model>
 	<parts>
 		<inventoryId>engine</inventoryId>
 		<type>ENGINE</type>
-		<condition>WORN</condition>
+		<condition>NEW</condition>
 	</parts>
 	<parts>
 		<inventoryId>electrical</inventoryId>
 		<type>ELECTRICAL</type>
-		<condition>NO_POWER</condition>
+		<condition>GOOD</condition>
 	</parts>
 	<parts>
 		<inventoryId>tire</inventoryId>
@@ -21,12 +21,12 @@
 	<parts>
 		<inventoryId>tire</inventoryId>
 		<type>TIRE</type>
-		<condition>FLAT</condition>
+		<condition>NEW</condition>
 	</parts>
 	<parts>
 		<inventoryId>tire</inventoryId>
 		<type>TIRE</type>
-		<condition>WORN</condition>
+		<condition>NEW</condition>
 	</parts>
 	<parts>
 		<inventoryId>tire</inventoryId>
@@ -41,6 +41,6 @@
 	<parts>
 		<inventoryId>oil_filter</inventoryId>
 		<type>OIL_FILTER</type>
-		<condition>CLOGGED</condition>
+		<condition>GOOD</condition>
 	</parts>
 </car>

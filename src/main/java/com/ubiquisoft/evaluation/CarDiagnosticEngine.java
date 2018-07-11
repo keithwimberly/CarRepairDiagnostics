@@ -9,11 +9,56 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class CarDiagnosticEngine {
 
+
+
 	public void executeDiagnostics(Car car) {
-		/*
+
+		// Step 1: Validate basic 3 car data fields are present
+		boolean basicCarInformationMissing = validateBasicCarInformation(car);
+		if (basicCarInformationMissing) {
+			// Return if any validation fails
+			return;
+		}
+
+
+		// Step 2: Validate that there are not missing parts
+		Map<PartType, Integer> missingPartsMap = car.getMissingPartsMap();
+        for (Map.Entry<PartType, Integer> entry : missingPartsMap.entrySet()) {
+            PartType missingPartType = entry.getKey();
+            Integer missingPartCount = entry.getValue();
+            printMissingPart(missingPartType, missingPartCount);
+        }
+        if (missingPartsMap.size() > 0) {
+            return;
+        }
+
+        // Step 3: Validate for damaged parts
+        boolean foundDamagedParts = false;
+        List<Part> parts = car.getParts();
+        for (Part part : parts) {
+            ConditionType condition = part.getCondition();
+            if (condition == null || !part.isInWorkingCondition()) {
+                foundDamagedParts = true;
+                PartType partType = part.getType();
+                ConditionType partCondition = part.getCondition();
+                printDamagedPart(partType, partCondition);
+            }
+        }
+        if (foundDamagedParts) {
+            return;
+        }
+        else {
+            System.out.println("Car checks out good!");
+        }
+
+
+        /*
 		 * Implement basic diagnostics and print results to console.
 		 *
 		 * The purpose of this method is to find any problems with a car's data or parts.
@@ -42,6 +87,38 @@ public class CarDiagnosticEngine {
 
 	}
 
+	private boolean validateBasicCarInformation(Car car)
+	{
+		boolean missingInformation = false;
+		List<String> missingCarInformation = new LinkedList<String>();
+
+		String make = car.getMake();
+		if (make == null) {
+			missingCarInformation.add("Make");
+		}
+		String model = car.getModel();
+		if (model == null) {
+			missingCarInformation.add("Model");
+		}
+		String year = car.getYear();
+		if (year == null) {
+			missingCarInformation.add("Year");
+		}
+		if (missingCarInformation.size() > 0) {
+			missingInformation = true;
+			printMissingCarInformation(missingCarInformation);
+		}
+		return missingInformation;
+	}
+
+	private void printMissingCarInformation(List missingCarInformation)
+	{
+		// Print missing field to the console in a similar manner to how the provided methods do
+		if (missingCarInformation != null && missingCarInformation.size() > 0) {
+			System.out.println(String.format("Missing Car Information Detected: %s", missingCarInformation));
+		}
+	}
+
 	private void printMissingPart(PartType partType, Integer count) {
 		if (partType == null) throw new IllegalArgumentException("PartType must not be null");
 		if (count == null || count <= 0) throw new IllegalArgumentException("Count must be greater than 0");
@@ -57,27 +134,39 @@ public class CarDiagnosticEngine {
 	}
 
 	public static void main(String[] args) throws JAXBException {
-		// Load classpath resource
-		InputStream xml = ClassLoader.getSystemResourceAsStream("SampleCar.xml");
 
-		// Verify resource was loaded properly
-		if (xml == null) {
-			System.err.println("An error occurred attempting to load SampleCar.xml");
+	    for (String arg : args) {
 
-			System.exit(1);
-		}
+	        String carFilename = arg + ".xml";
 
-		// Build JAXBContext for converting XML into an Object
-		JAXBContext context = JAXBContext.newInstance(Car.class, Part.class);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
+	        System.out.println("Diagnosing " + carFilename);
+	        System.out.println("------------------------");
 
-		Car car = (Car) unmarshaller.unmarshal(xml);
+            // Load classpath resource
+            InputStream xml = ClassLoader.getSystemResourceAsStream(carFilename);
 
-		// Build new Diagnostics Engine and execute on deserialized car object.
+            // Verify resource was loaded properly
+            if (xml == null) {
+                System.err.println("An error occurred attempting to load " + carFilename);
 
-		CarDiagnosticEngine diagnosticEngine = new CarDiagnosticEngine();
+                System.exit(1);
+            }
 
-		diagnosticEngine.executeDiagnostics(car);
+            // Build JAXBContext for converting XML into an Object
+            JAXBContext context = JAXBContext.newInstance(Car.class, Part.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+
+            Car car = (Car) unmarshaller.unmarshal(xml);
+
+            // Build new Diagnostics Engine and execute on deserialized car object.
+
+            CarDiagnosticEngine diagnosticEngine = new CarDiagnosticEngine();
+
+            diagnosticEngine.executeDiagnostics(car);
+
+            System.out.println();
+            System.out.println();
+        }
 
 	}
 
